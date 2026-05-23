@@ -69,7 +69,8 @@ Open [http://localhost:3000](http://localhost:3000)
 - Vercel AI SDK
 
 ## Syntax
- - /init - run first time, this will look at the full project and scan codebase, create sumamry, write CALUDE.md file, this file is included in every request
- - Auto except or shift + tab, to wright your own 
- - CALUDE.md are local[CALUDE.local.md], project[]CALUDE.md] and machine level [~/.calude/CLAUDE.md]
- - @ - adding source, ex, How does the auth system work? @src/lib/auth.ts
+
+- /init - run first time, this will look at the full project and scan codebase, create sumamry, write CALUDE.md file, this file is included in every request
+- Auto except or shift + tab, to wright your own
+- CALUDE.md are local[CALUDE.local.md], project[]CALUDE.md] and machine level [~/.calude/CLAUDE.md]
+- @ - adding source, ex, How does the auth system work? @src/lib/auth.ts
