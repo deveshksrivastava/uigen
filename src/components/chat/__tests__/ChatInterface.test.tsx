@@ -1,6 +1,5 @@
 import { test, expect, vi, afterEach, beforeEach } from "vitest";
-import { render, screen, waitFor, cleanup } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen, cleanup } from "@testing-library/react";
 import { ChatInterface } from "../ChatInterface";
 import { useChat } from "@/lib/contexts/chat-context";
 
@@ -11,7 +10,7 @@ vi.mock("@/lib/contexts/chat-context", () => ({
 
 // Mock the ScrollArea component
 vi.mock("@/components/ui/scroll-area", () => ({
-  ScrollArea: ({ children, className }: any) => (
+  ScrollArea: ({ children, className }: { children: React.ReactNode; className: string }) => (
     <div className={className} data-radix-scroll-area-viewport>
       {children}
     </div>
@@ -20,7 +19,13 @@ vi.mock("@/components/ui/scroll-area", () => ({
 
 // Mock the child components
 vi.mock("../MessageList", () => ({
-  MessageList: ({ messages, isLoading }: any) => (
+  MessageList: ({
+    messages,
+    isLoading,
+  }: {
+    messages: { id: string; role: string; content: string }[];
+    isLoading: boolean;
+  }) => (
     <div data-testid="message-list">
       {messages.length} messages, loading: {isLoading.toString()}
     </div>
@@ -28,7 +33,17 @@ vi.mock("../MessageList", () => ({
 }));
 
 vi.mock("../MessageInput", () => ({
-  MessageInput: ({ input, handleInputChange, handleSubmit, isLoading }: any) => (
+  MessageInput: ({
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading,
+  }: {
+    input: string;
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleSubmit: (e: React.FormEvent) => void;
+    isLoading: boolean;
+  }) => (
     <div data-testid="message-input">
       <input value={input} onChange={handleInputChange} data-testid="input" disabled={isLoading} />
       <button onClick={handleSubmit} disabled={isLoading} data-testid="submit">
@@ -37,6 +52,9 @@ vi.mock("../MessageInput", () => ({
     </div>
   ),
 }));
+
+// Mock scrollIntoView which is not implemented in jsdom
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 const mockUseChat = {
   messages: [],
@@ -48,7 +66,7 @@ const mockUseChat = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  (useChat as any).mockReturnValue(mockUseChat);
+  vi.mocked(useChat).mockReturnValue(mockUseChat);
 });
 
 afterEach(() => {
@@ -68,7 +86,7 @@ test("passes correct props to MessageList", () => {
     { id: "2", role: "assistant", content: "Hi there!" },
   ];
 
-  (useChat as any).mockReturnValue({
+  vi.mocked(useChat).mockReturnValue({
     ...mockUseChat,
     messages,
     status: "streaming",
@@ -82,7 +100,7 @@ test("passes correct props to MessageList", () => {
 });
 
 test("passes correct props to MessageInput", () => {
-  (useChat as any).mockReturnValue({
+  vi.mocked(useChat).mockReturnValue({
     ...mockUseChat,
     input: "Test input",
     status: "submitted",
@@ -96,7 +114,7 @@ test("passes correct props to MessageInput", () => {
 });
 
 test("isLoading is true when status is submitted", () => {
-  (useChat as any).mockReturnValue({
+  vi.mocked(useChat).mockReturnValue({
     ...mockUseChat,
     status: "submitted",
   });
@@ -108,7 +126,7 @@ test("isLoading is true when status is submitted", () => {
 });
 
 test("isLoading is true when status is streaming", () => {
-  (useChat as any).mockReturnValue({
+  vi.mocked(useChat).mockReturnValue({
     ...mockUseChat,
     status: "streaming",
   });
@@ -120,7 +138,7 @@ test("isLoading is true when status is streaming", () => {
 });
 
 test("isLoading is false when status is idle", () => {
-  (useChat as any).mockReturnValue({
+  vi.mocked(useChat).mockReturnValue({
     ...mockUseChat,
     status: "idle",
   });
@@ -141,7 +159,7 @@ test("scrolls when messages change", () => {
   expect(scrollContainer).toBeDefined();
 
   // Update messages - this should trigger the useEffect
-  (useChat as any).mockReturnValue({
+  vi.mocked(useChat).mockReturnValue({
     ...mockUseChat,
     messages: [
       { id: "1", role: "user", content: "Hello" },
