@@ -131,6 +131,15 @@ exports.Prisma.ProjectScalarFieldEnum = {
   updatedAt: "updatedAt",
 };
 
+exports.Prisma.FeedbackScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  email: "email",
+  rating: "rating",
+  message: "message",
+  createdAt: "createdAt",
+};
+
 exports.Prisma.SortOrder = {
   asc: "asc",
   desc: "desc",
@@ -144,6 +153,7 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   User: "User",
   Project: "Project",
+  Feedback: "Feedback",
 };
 
 /**

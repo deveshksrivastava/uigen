@@ -32,3 +32,12 @@ model Project {
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model Feedback {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  rating    Int
+  message   String
+  createdAt DateTime @default(now())
+}
